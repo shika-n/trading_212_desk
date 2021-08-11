@@ -1,6 +1,6 @@
 import scraper.scraper as scraper
 
-from models.portfolio import Portfolio
+from models.driver_portfolio import DriverPortfolio
 
 from selenium.webdriver import Chrome
 
@@ -10,7 +10,7 @@ with Chrome() as driver:
     scraper.wait_for_platform_loader(driver)
     scraper.goto_portfolio_section(driver)
 
-    portfolio = Portfolio(driver)
+    portfolio = DriverPortfolio(driver)
 
     for stock in portfolio.stocks:
         print('[{}] {} - {} ({:.2f}%) ({:.2f}%% of total portfolio)'.format(

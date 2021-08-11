@@ -1,3 +1,4 @@
+from time import time
 from util.currency import remove_currency_signs
 
 class OwnedStock:
@@ -24,10 +25,11 @@ class OwnedStock:
     def get_return_percentage(self):
         return self.return_value / self.get_base_value()
 
-def get_stocks_list(driver):
+def d_get_stocks_list(driver):
     print('Getting investments...')
+
     investments_section = driver.find_element_by_class_name('investments-section')
-    
+
     # Faster than getting elements one by one inside a for loop
     stock_tickers = [item.get_attribute('innerHTML') for item in investments_section.find_elements_by_class_name('instrument-logo-name')] # TICK
     stock_names = [item.text for item in investments_section.find_elements_by_class_name('text')] # Stock Name
@@ -50,5 +52,35 @@ def get_stocks_list(driver):
         )
 
         owned_stocks.append(owned_stock)
+
+    return owned_stocks
+
+def h_get_stocks_list(soup):
+    print('Getting investments...')
     
+    owned_stocks = []
+
+    # Faster then getting arrays of property for every stock
+    stocks = soup.find_all(class_='investment-item')
+    for elem in stocks:
+        stock_ticker = elem.find(class_='instrument-logo-name').string
+        stock_name = elem.find(class_='text').string
+        stock_quantitie = float(elem.find(class_='quantity').string.split(' ')[0])
+        stock_total_value = float(remove_currency_signs(elem.find(class_='total-value').string))
+        stock_return_value = float(remove_currency_signs(elem.find(class_='return').find('div').string.split(' ')[0]))
+        stock_type = 'Stock' if elem['data-qa-item'].count('_') == 2 else 'ETF'
+        stock_logo_url = elem.find('img')['src']
+
+        owned_stock = OwnedStock(
+            stock_ticker,
+            stock_name,
+            stock_quantitie,
+            stock_total_value,
+            stock_return_value,
+            stock_type,
+            stock_logo_url
+        )
+
+        owned_stocks.append(owned_stock)
+
     return owned_stocks
