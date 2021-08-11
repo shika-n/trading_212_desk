@@ -1,4 +1,4 @@
-import scraper
+import scraper.scraper as scraper
 
 from models.portfolio import Portfolio
 

@@ -2,12 +2,17 @@ from models.stock import get_stocks_list
 from util.currency import remove_currency_signs
 
 class Portfolio:
+    username = 'Unavailable'
     total_value = 0
     stocks = []
 
     def __init__(self, driver):
-        self.total_value = get_total_portfolio_value(driver)
-        self.stocks = get_stocks_list(driver)
+        if is_trading_type_real(driver):
+            self.username = get_username(driver) 
+            self.total_value = get_total_portfolio_value(driver)
+            self.stocks = get_stocks_list(driver)
+        else:
+            print('Investing type is Demo, please login in your browser manually and change to Investing first')
 
     def get_total_return(self):
         total_return = 0
@@ -44,3 +49,12 @@ def get_total_portfolio_value(driver):
         total_portfolio_value_str += value.text
 
     return float(remove_currency_signs(total_portfolio_value_str))
+
+def get_username(driver):
+    print('Getting username')
+
+    return driver.find_element_by_class_anem('username').text
+
+def is_trading_type_real(driver):
+    print(driver.find_element_by_class_name('trading-type').text)
+    return driver.find_element_by_class_name('trading-type').text.lower() == 'Investing - Real Money'.lower()
