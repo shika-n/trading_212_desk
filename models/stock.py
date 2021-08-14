@@ -2,9 +2,9 @@ from enum import Enum
 from util.currency import remove_currency_signs
 
 class StockType(Enum):
-    UNDEFINED: 0
-    STOCK: 1
-    ETF: 2
+    UNDEFINED = 0
+    STOCK = 1
+    ETF = 2
 
 class OwnedStock:
     ticker = 'N/A'
@@ -12,7 +12,7 @@ class OwnedStock:
     quantity = 0
     total_value = 0
     return_value = 0
-    stock_type = None
+    stock_type = StockType.UNDEFINED
     logo_url = ''
 
     def __init__(self, ticker, name, quantity, total_value, return_value, stock_type, logo_url):

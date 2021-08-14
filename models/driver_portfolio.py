@@ -1,4 +1,3 @@
-from os import remove
 from models.portfolio import Portfolio
 
 from models.stock import d_get_stocks_list
@@ -27,7 +26,7 @@ def d_get_portfolio_value(driver):
     return float(remove_currency_signs(portfolio_value_str))
 
 def d_get_portfolio_total_value(driver):
-    return float(remove_currency_signs(driver.find_element_by_class_name('account-status-header-value').string))
+    return float(remove_currency_signs(driver.find_element_by_class_name('account-status-header-value').text))
 
 def d_get_username(driver):
     print('Getting username')
