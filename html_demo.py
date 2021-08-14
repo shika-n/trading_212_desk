@@ -3,8 +3,10 @@ from models.html_portfolio import HtmlPortfolio
 from bs4 import BeautifulSoup
 
 with open('source.html') as source:
+    # Parse a html file, should be the source of the portfolio page where all of the investments are visible
     soup = BeautifulSoup(source, 'html.parser')
 
+    # Initialize portfolio which data is from html file
     portfolio = HtmlPortfolio(soup)
 
     for stock in portfolio.stocks:
