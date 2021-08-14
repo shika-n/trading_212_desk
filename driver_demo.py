@@ -1,15 +1,44 @@
+import gc
+from msvcrt import getch # Need for password input, only works in windows
+
 import scraper.scraper as scraper
-
 from models.driver_portfolio import DriverPortfolio
+from util.drivers import get_driver
 
-from selenium.webdriver import Chrome
+def ask_credentials_terminal():
+    email = input('E-mail: ')
+    
+    print('Password: ')
+    password = ''
+    while True:
+        ch = getch().decode('utf-8')
+        if ch == '\n' or ch == '\r':
+            break
+        password += ch
 
-with Chrome() as driver:
-    scraper.open_trading212_page(driver)
-    scraper.login(driver)
+    return email, password
+
+with get_driver('chrome') as driver:
+    # Open page without session token
+    if not scraper.open_trading212_page(driver):
+        raise 'Failed to open Trading212 page or session token is invalid'
+
+    # Ask credentials and login
+    email, password = ask_credentials_terminal()
+    if not scraper.login(driver, email, password):
+        raise 'Wrong credentials'
+
+    # Not sure if necessary, want it to be short lived
+    del password
+    gc.collect()
+
+    # Wait until splash screen is gone
     scraper.wait_for_platform_loader(driver)
+
+    # Switch to portfolio section
     scraper.goto_portfolio_section(driver)
 
+    # Initialize portfolio which data is from webdriver
     portfolio = DriverPortfolio(driver)
 
     for stock in portfolio.stocks:
@@ -27,4 +56,5 @@ with Chrome() as driver:
         portfolio.get_total_return_percentage() * 100
     ))
 
+    driver.delete_all_cookies()
     print('Done.')

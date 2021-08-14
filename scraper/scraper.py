@@ -1,12 +1,10 @@
-import gc
 import time
 
-from msvcrt import getch
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-def login(driver):
+def login(driver, email, password):
     print('Waiting for login form...')
     email_field = driver.find_element_by_name('email')
     password_field = driver.find_element_by_name('password')
@@ -15,51 +13,26 @@ def login(driver):
     print('Source code can be seen at https://github.com/shika-n/trading212-portfolio-scraper')
     print('Do not share credentials with anybody!')
 
-    first_ask = True
-    login_button_visible = is_login_button_visible(driver)
-    while first_ask or login_button_visible:
-        if not first_ask:
-            print('Credentials is wrong, please try again\n')
-
-        ask_credentials(email_field, password_field)
-        login_button.click()
-
-        first_ask = False
-
-        time.sleep(5)
-
-        login_button_visible = is_login_button_visible(driver)
-
-    print('Login section done.')
-
-def ask_credentials(email_field, password_field):
-    email = input('E-mail: ')
-
+    # Input email
     email_field.clear()
     email_field.send_keys(email)
-    
-    print('Password: ')
-    password = ''
-    while True:
-        ch = getch().decode('utf-8')
-        if ch == '\n' or ch == '\r':
-            break
-        password += ch
 
+    # Input password
     password_field.clear()
     password_field.send_keys(password)
-    
-    del password
-    gc.collect()
 
-    print('Logging in...')
+    # Click on login button
+    login_button.click()
 
-def is_login_button_visible(driver):
-    try:
-        driver.find_element(By.CLASS_NAME, 'submit-button_input__3s_QD')
-        return True
-    except:
+    # Give time to login and screen transition
+    time.sleep(5)
+
+    # Check if login button is still visible (failed to login)
+    login_button_visible = is_login_button_visible(driver)
+    if login_button_visible:
         return False
+
+    return True
 
 def goto_portfolio_section(driver):
     print('Clicking on portfolio tab...')
@@ -70,6 +43,46 @@ def wait_for_platform_loader(driver):
     print('Waiting for platform-loader...')
     WebDriverWait(driver, timeout=60).until(EC.invisibility_of_element((By.ID, 'platform-loader')))
 
-def open_trading212_page(driver):
-    print('Opening Trading212 website...')
+def open_trading212_page(driver, session_token=None, expiry=None):
+    print('Opening Trading212 login page...')
     driver.get('https://www.trading212.com/en/login')
+
+    if session_token != None:
+        print('Opening Trading212 with provided session token...')
+
+        session_cookie = {
+            'name': 'TRADING212_SESSION_LIVE',
+            'value': session_token,
+            'domain': '.trading212.com',
+            'path': '/',
+            'secure': True,
+            'httpOnly': True
+        }
+
+        if expiry != None:
+            session_cookie['expiry'] = expiry
+
+        driver.add_cookie(session_cookie)
+        
+        driver.get('https://live.trading212.com/')
+
+        # Give time for screen transition
+        time.sleep(5)
+
+        return is_platform_loader_visible(driver)
+    
+    return True
+
+def is_login_button_visible(driver):
+    try:
+        driver.find_element(By.CLASS_NAME, 'submit-button_input__3s_QD')
+        return True
+    except:
+        return False
+
+def is_platform_loader_visible(driver):
+    try:
+        driver.find_element(By.ID, 'platform-loader')
+        return True
+    except:
+        return False
