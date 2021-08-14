@@ -1,5 +1,10 @@
-from time import time
+from enum import Enum
 from util.currency import remove_currency_signs
+
+class StockType(Enum):
+    UNDEFINED: 0
+    STOCK: 1
+    ETF: 2
 
 class OwnedStock:
     ticker = 'N/A'
@@ -7,7 +12,7 @@ class OwnedStock:
     quantity = 0
     total_value = 0
     return_value = 0
-    stock_type = 'N/A'
+    stock_type = StockType.UNDEFINED
     logo_url = ''
 
     def __init__(self, ticker, name, quantity, total_value, return_value, stock_type, logo_url):
@@ -36,7 +41,7 @@ def d_get_stocks_list(driver):
     stock_quantities = [float(item.text.split(' ')[0]) for item in investments_section.find_elements_by_class_name('quantity')] # 0.00000 shares
     stock_total_values = [float(remove_currency_signs(item.text)) for item in investments_section.find_elements_by_class_name('total-value')] # $123.45
     stock_return_values = [float(remove_currency_signs(item.find_element_by_tag_name('div').text.split(' ')[0])) for item in investments_section.find_elements_by_class_name('return')] # $-123.45 (-0.00%)
-    stock_types = ['Stock' if item.get_attribute('data-qa-item').count('_') == 2 else 'ETF' for item in investments_section.find_elements_by_class_name('investment-item')] # TICK_US_EQ | TICK_EQ
+    stock_types = [StockType.STOCK if item.get_attribute('data-qa-item').count('_') == 2 else StockType.ETF for item in investments_section.find_elements_by_class_name('investment-item')] # TICK_US_EQ | TICK_EQ
     stock_logo_urls = [item.get_attribute('src') for item in investments_section.find_elements_by_tag_name('img')] # link
 
     owned_stocks = []
@@ -68,7 +73,7 @@ def h_get_stocks_list(soup):
         stock_quantitie = float(elem.find(class_='quantity').string.split(' ')[0])
         stock_total_value = float(remove_currency_signs(elem.find(class_='total-value').string))
         stock_return_value = float(remove_currency_signs(elem.find(class_='return').find('div').string.split(' ')[0]))
-        stock_type = 'Stock' if elem['data-qa-item'].count('_') == 2 else 'ETF'
+        stock_type = StockType.STOCK if elem['data-qa-item'].count('_') == 2 else StockType.ETF
         stock_logo_url = elem.find('img')['src']
 
         owned_stock = OwnedStock(

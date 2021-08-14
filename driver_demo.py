@@ -50,7 +50,7 @@ with get_driver('chrome') as driver:
             portfolio.get_stock_portfolio_percentage(stock) * 100
         ))
     
-    print('Total Portfolio Value: {}'.format(portfolio.total_value))
+    print('Total Portfolio Value: {}'.format(portfolio.value))
     print('Total Return: {:.2f} ({:.2f}%)'.format(
         portfolio.get_total_return(),
         portfolio.get_total_return_percentage() * 100

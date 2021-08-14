@@ -1,8 +1,8 @@
-from models.stock import d_get_stocks_list
-from util.currency import remove_currency_signs
+from models.stock import StockType
 
 class Portfolio:
     username = 'Unavailable'
+    value = 0
     total_value = 0
     stocks = []
 
@@ -23,13 +23,16 @@ class Portfolio:
 
     def get_total_return_percentage(self):
         total_return = self.get_total_return()
-        return total_return / (self.total_value - total_return)
+        return total_return / (self.value - total_return)
 
     def get_stock_portfolio_percentage(self, stock):
-        return stock.total_value / self.total_value
+        return stock.total_value / self.value
 
-    def get_stocks_count(self):
-        return len(self.stocks)
+    def get_free_cash(self):
+        return self.total_value - self.value
+
+    def get_picks(self):
+        return [stock for stock in self.stocks if stock.stock_type == StockType.STOCK]
 
     def get_etfs(self):
-        return [stock for stock in self.stocks if stock.stock_type == 'ETF']
+        return [stock for stock in self.stocks if stock.stock_type == StockType.ETF]
