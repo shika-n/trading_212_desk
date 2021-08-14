@@ -12,7 +12,7 @@ class OwnedStock:
     quantity = 0
     total_value = 0
     return_value = 0
-    stock_type = StockType.UNDEFINED
+    stock_type = None
     logo_url = ''
 
     def __init__(self, ticker, name, quantity, total_value, return_value, stock_type, logo_url):

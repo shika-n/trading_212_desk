@@ -27,7 +27,7 @@ def d_get_portfolio_value(driver):
     return float(remove_currency_signs(portfolio_value_str))
 
 def d_get_portfolio_total_value(driver):
-    return float(remove_currency_signs(driver.find_element_by_class_name('account-status-header-value')))
+    return float(remove_currency_signs(driver.find_element_by_class_name('account-status-header-value').string))
 
 def d_get_username(driver):
     print('Getting username')
