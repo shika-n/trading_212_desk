@@ -37,6 +37,7 @@ def login(driver, email, password):
 def goto_portfolio_section(driver):
     print('Clicking on portfolio tab...')
     driver.find_element_by_class_name('portfolio-icon').click()
+    WebDriverWait(driver, timeout=5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'investment-tab')))
     driver.find_element_by_class_name('investment-tab').click()
 
 def wait_for_platform_loader(driver):
