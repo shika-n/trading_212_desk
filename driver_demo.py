@@ -18,7 +18,7 @@ def ask_credentials_terminal():
 
     return email, password
 
-with get_driver('chrome') as driver:
+with get_driver('firefox', { 'useCloudflareDns': True }) as driver:
     # Open page without session token
     if not scraper.open_trading212_page(driver):
         raise 'Failed to open Trading212 page or session token is invalid'
