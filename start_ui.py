@@ -1,10 +1,10 @@
 import sys
 
-from PyQt6.QtGui import QGuiApplication
+from PyQt6.QtWidgets import QApplication
 from PyQt6.QtQml import QQmlApplicationEngine
 
 def main():
-    app = QGuiApplication(sys.argv)
+    app = QApplication(sys.argv)
 
     engine = QQmlApplicationEngine()
     engine.quit.connect(app.quit)
