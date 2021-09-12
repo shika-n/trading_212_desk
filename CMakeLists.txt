@@ -10,22 +10,23 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Set Qt path
-set(CMAKE_PREFIX_PATH "C:/Qt/6.1.2/msvc2019_64/")
+list(APPEND CMAKE_PREFIX_PATH "C:/Qt/6.1.2/msvc2019_64")
 
-# Set Qt Auto RCC
+# Set Qt Auto MOC, RCC, & UIC
+set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-
+set(CMAKE_AUTOUIC ON)
 
 # Add source to this project's executable.
 add_executable(
 	Trading212Desk
-	"src/main.cpp"
 	resources.qrc
+	"src/main.cpp"
+	"src/network/dns_over_https.cpp"
+	"src/network/net_request.cpp"
+	"src/network/dns_entry.cpp"
 )
 
-# Add Qt header files
-target_include_directories(Trading212Desk PRIVATE "C:/Qt/6.1.2/msvc2019_64/include")
-
 # Add Qt library files
-find_package(Qt6 COMPONENTS Charts Qml Quick Widgets REQUIRED)
-target_link_libraries(Trading212Desk Qt6::Charts Qt6::Qml Qt6::Quick Qt6::Widgets)
+find_package(Qt6 COMPONENTS Core Quick Widgets REQUIRED)
+target_link_libraries(Trading212Desk Qt6::Core Qt6::Quick Qt6::Widgets)
