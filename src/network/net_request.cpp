@@ -1,5 +1,7 @@
 #include "net_request.h"
 
+#include <algorithm>
+
 #include <QNetworkReply>
 
 #include "dns_over_https.h"
@@ -8,12 +10,12 @@ namespace trading_212_desk {
 
 	NetRequest::NetRequest() {
 		// Connect to handler
-		QObject::connect(&net_manager, &QNetworkAccessManager::finished, this, &NetRequest::request_finished);
+		connect(&net_manager, &QNetworkAccessManager::finished, this, &NetRequest::request_finished);
 	}
 
 	NetRequest::NetRequest(const char* url) {
 		// Connect to handler
-		QObject::connect(&net_manager, &QNetworkAccessManager::finished, this, &NetRequest::request_finished);
+		connect(&net_manager, &QNetworkAccessManager::finished, this, &NetRequest::request_finished);
 
 		set_url(url);
 	}
@@ -51,13 +53,18 @@ namespace trading_212_desk {
 	void NetRequest::get(DnsOverHttps* doh) {
 		if (doh != nullptr) {
 			request.setPeerVerifyName(unresolved_host);
-			
-			doh->resolve(unresolved_host);
-			QObject::connect(doh, &DnsOverHttps::resolved, [this](const QString& resolved_host) -> void {
+
+			auto connection = std::make_unique<QMetaObject::Connection>();
+			auto connection_ptr = connection.get();
+			*connection_ptr = (connect(doh, &DnsOverHttps::resolved, [this, connection = std::move(connection)](const QString &resolved_host) mutable -> void {
+				std::unique_ptr<QMetaObject::Connection> _connection = std::move(connection);
 				replace_host(resolved_host);
 				net_manager.get(request);
-				// TODO: Disconenct
-			});
+
+				disconnect(*_connection);
+			}));
+
+			doh->resolve(unresolved_host);
 			return;
 		} else {
 			request.setPeerVerifyName(nullptr);
@@ -81,8 +88,6 @@ namespace trading_212_desk {
 		}
 
 		uint16_t status_code = reply->attribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute).toUInt();
-
-		qDebug() << status_code << result << error_message;
 		emit finished(status_code, result, error_message);
 	}
 
