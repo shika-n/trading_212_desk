@@ -13,14 +13,14 @@ namespace trading_212_desk {
 		connect(&net_manager, &QNetworkAccessManager::finished, this, &NetRequest::request_finished);
 	}
 
-	NetRequest::NetRequest(const char* url) {
+	NetRequest::NetRequest(const char *url) {
 		// Connect to handler
 		connect(&net_manager, &QNetworkAccessManager::finished, this, &NetRequest::request_finished);
 
 		set_url(url);
 	}
 
-	void NetRequest::set_url(const char* url) {
+	void NetRequest::set_url(const char *url) {
 		// Convert the url to QUrl so that we can modify the url and queries later on
 		qurl.setUrl(url);
 
@@ -36,11 +36,11 @@ namespace trading_212_desk {
 		set_header("Host", unresolved_host);
 	}
 
-	void NetRequest::set_header(const char* key, const QString& value) {
+	void NetRequest::set_header(const char *key, const QString &value) {
 		request.setRawHeader(key, value.toUtf8());
 	}
 
-	void NetRequest::set_query(const char* key, const QString& value) {
+	void NetRequest::set_query(const char *key, const QString &value) {
 		// Removes and re-adds the query
 		query.removeQueryItem(key);
 		query.addQueryItem(key, value);
@@ -50,7 +50,7 @@ namespace trading_212_desk {
 		request.setUrl(qurl);
 	}
 
-	void NetRequest::get(DnsOverHttps* doh) {
+	void NetRequest::get(DnsOverHttps *doh) {
 		if (doh != nullptr) {
 			request.setPeerVerifyName(unresolved_host);
 
@@ -72,12 +72,12 @@ namespace trading_212_desk {
 		net_manager.get(request);
 	}
 
-	void NetRequest::replace_host(const QString& resolved_host) {
+	void NetRequest::replace_host(const QString &resolved_host) {
 		qurl.setHost(resolved_host);
 		request.setUrl(qurl);
 	}
 
-	void NetRequest::request_finished(QNetworkReply* reply) {
+	void NetRequest::request_finished(QNetworkReply *reply) {
 		QString error_message;
 		QByteArray result;
 

@@ -16,19 +16,19 @@ namespace trading_212_desk {
 
 	public:
 		NetRequest();
-		NetRequest(const char* url);
+		NetRequest(const char *url);
 
-		void set_url(const char* url);
+		void set_url(const char *url);
 
-		void set_header(const char* key, const QString& value);
-		void set_query(const char* key, const QString& value);
+		void set_header(const char *key, const QString &value);
+		void set_query(const char *key, const QString &value);
 
 		// Send a GET request
-		void get(DnsOverHttps* cloudflare_doh = nullptr);
+		void get(DnsOverHttps *cloudflare_doh = nullptr);
 
 	signals:
 		// A simplified, ready to use response signal
-		void finished(uint16_t status_code, const QByteArray& data, const QString& error_message);
+		void finished(uint16_t status_code, const QByteArray &data, const QString &error_message);
 
 	private:
 		QString unresolved_host;
@@ -38,9 +38,9 @@ namespace trading_212_desk {
 		QUrl qurl;
 		QUrlQuery query;
 
-		void replace_host(const QString& resolved_host);
+		void replace_host(const QString &resolved_host);
 
 	private slots:
-		void request_finished(QNetworkReply* reply);
+		void request_finished(QNetworkReply *reply);
 	};
 }

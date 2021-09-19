@@ -9,10 +9,10 @@ namespace trading_212_desk {
 	class DnsEntry {
 	public:
 		DnsEntry();
-		DnsEntry(const QString& name, uint16_t type, uint16_t ttl, const QString& data);
+		DnsEntry(const QString &name, uint16_t type, uint16_t ttl, const QString &data);
 
-		const QString& get_name();
-		const QString& get_data();
+		const QString &get_name();
+		const QString &get_data();
 
 		uint16_t get_type();
 		bool is_expired();

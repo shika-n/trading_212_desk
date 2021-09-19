@@ -12,7 +12,7 @@
 namespace trading_212_desk {
 
 	DnsOverHttps::DnsOverHttps(DnsProvider dns_provider) {
-		QObject::connect(&request, &NetRequest::finished, this, &DnsOverHttps::request_responded);
+		connect(&request, &NetRequest::finished, this, &DnsOverHttps::request_responded);
 
 		if (dns_provider == DnsProvider::kCloudflare) {
 			request.set_url("https://cloudflare-dns.com/dns-query?type=A&ct=application/dns-json");
@@ -21,12 +21,13 @@ namespace trading_212_desk {
 		}
 	}
 
-	void DnsOverHttps::resolve(const QString& host) {
+	void DnsOverHttps::resolve(const QString &host) {
 		// Try to get entry from cache
-		DnsEntry* entry_from_cache = resolve_from_cache(host);
+		DnsEntry *entry_from_cache = resolve_from_cache(host);
 		// If there is a good entry in cache, use it and return
 		if (entry_from_cache != nullptr) {
 			if (entry_from_cache->is_expired()) {
+				qDebug() << entry_from_cache->get_name() << "is expired";
 				// Request with the expired host
 				send_doh_request(entry_from_cache->get_name());
 			} else {
@@ -41,10 +42,10 @@ namespace trading_212_desk {
 		// When send_doh_request finishes request_responded is called (see ctor)
 	}
 
-	DnsEntry* DnsOverHttps::resolve_from_cache(const QString& host) {
+	DnsEntry *DnsOverHttps::resolve_from_cache(const QString &host) {
 		// If host exist in cache
 		if (cache.find(host) != cache.end()) {
-			DnsEntry& entry = cache.at(host);
+			DnsEntry &entry = cache.at(host);
 
 			// If expired, return the dns
 			if (entry.is_expired()) {
@@ -65,21 +66,21 @@ namespace trading_212_desk {
 		return nullptr;
 	}
 
-	void DnsOverHttps::send_doh_request(const QString& host) {
+	void DnsOverHttps::send_doh_request(const QString &host) {
 		// Send request 
 		request.set_query("name", host);
 		request.get();
 	}
 
-	void DnsOverHttps::request_responded(uint16_t status_code, const QByteArray& data, const QString& error_message) {
+	void DnsOverHttps::request_responded(uint16_t status_code, const QByteArray &data, const QString &error_message) {
 		if (status_code == 200) {
 			// Convert Json string to map object (QJsonDocument)
 			QJsonDocument json_doc = QJsonDocument::fromJson(data);
 			QString requested_name = json_doc["Question"][0]["name"].toString();
-			const QJsonArray& answers = json_doc["Answer"].toArray();
+			const QJsonArray &answers = json_doc["Answer"].toArray();
 
 			// For every entry, store it to cache
-			for (const QJsonValue& value : answers) {
+			for (const QJsonValue &value : answers) {
 				QString name = value["name"].toString();
 				uint16_t type = value["type"].toInt();
 				uint16_t ttl = value["TTL"].toInt();
@@ -103,7 +104,7 @@ namespace trading_212_desk {
 				requested_name.erase(requested_name.end() - 1, requested_name.end());
 			}
 			// Try to get the answer from the fresh cache
-			DnsEntry* entry_from_cache = resolve_from_cache(requested_name);
+			DnsEntry *entry_from_cache = resolve_from_cache(requested_name);
 			if (entry_from_cache != nullptr) {
 				emit resolved(entry_from_cache->get_data());
 			} else {

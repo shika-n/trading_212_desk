@@ -2,19 +2,19 @@
 
 namespace trading_212_desk {
 
-	DnsEntry::DnsEntry() {
+	DnsEntry::DnsEntry() : type(0) {
 
 	}
 
-	DnsEntry::DnsEntry(const QString& name, uint16_t type, uint16_t ttl, const QString& data) : name(name), type(type), data(data) {
+	DnsEntry::DnsEntry(const QString &name, uint16_t type, uint16_t ttl, const QString &data) : name(name), type(type), data(data) {
 		expires_at = std::chrono::high_resolution_clock::now() + std::chrono::seconds(ttl);
 	}
 
-	const QString& DnsEntry::get_name() {
+	const QString &DnsEntry::get_name() {
 		return name;
 	}
 
-	const QString& DnsEntry::get_data() {
+	const QString &DnsEntry::get_data() {
 		return data;
 	}
 
