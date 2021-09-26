@@ -14,6 +14,10 @@ namespace trading_212_desk {
 	DnsOverHttps::DnsOverHttps(DnsProvider dns_provider) {
 		connect(&request, &NetRequest::finished, this, &DnsOverHttps::request_responded);
 
+		setDnsProvider(dns_provider);
+	}
+
+	void DnsOverHttps::setDnsProvider(DnsProvider dns_provider) {
 		if (dns_provider == DnsProvider::kCloudflare) {
 			request.set_url("https://cloudflare-dns.com/dns-query?type=A&ct=application/dns-json");
 		} else if (dns_provider == DnsProvider::kGoogle) {

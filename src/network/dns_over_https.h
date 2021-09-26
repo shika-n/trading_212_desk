@@ -18,7 +18,9 @@ namespace trading_212_desk {
 		Q_OBJECT
 
 	public:
-		DnsOverHttps(DnsProvider dns_provider);
+		DnsOverHttps(DnsProvider dns_provider = DnsProvider::kCloudflare);
+
+		void setDnsProvider(DnsProvider dns_provider);
 
 		void resolve(const QString &host);
 
