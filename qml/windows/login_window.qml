@@ -5,14 +5,16 @@ import QtQuick.Layouts
 
 ApplicationWindow {
 	id: loginWindow
-	title: qsTr("Login")
 	minimumWidth: 400
 	minimumHeight: 300
 	maximumWidth: minimumWidth
 	maximumHeight: minimumHeight
-	visible: true
+	modality: Qt.WindowModal
+
+	property var cLoginView
+	
 	header: TabBar {
-		id: bar
+		id: tabs
 		width: parent.width
 		TabButton {
 			text: qsTr("Credential")
@@ -22,7 +24,7 @@ ApplicationWindow {
 		}
 	}
 	StackLayout {
-		currentIndex: bar.currentIndex
+		currentIndex: tabs.currentIndex
 		anchors.fill: parent
 		Container {
 			id: credentialTab
@@ -30,7 +32,7 @@ ApplicationWindow {
 			contentItem: GridLayout {
 				columns: 2
 				rows: 3
-				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.horizontalCenter: credentialTab.horizontalCenter
 				Label {
 					text: qsTr("E-mail")
 				}
@@ -64,7 +66,7 @@ ApplicationWindow {
 			contentItem: GridLayout {
 				columns: 2
 				rows: 2
-				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.horizontalCenter: tokenTab.horizontalCenter
 				Label {
 					text: qsTr("Token")
 				}
@@ -91,12 +93,18 @@ ApplicationWindow {
 				flat: true
 				Layout.fillWidth: true
 				Layout.fillHeight: true
+				onReleased: {
+					loginWindow.close();
+				}
 			}
 			Button {
 				text: qsTr("Login")
 				flat: true
 				Layout.fillWidth: true
 				Layout.fillHeight: true
+				onReleased: {
+					cLoginView.login();
+				}
 			}
 		}
 	}

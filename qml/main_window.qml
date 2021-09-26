@@ -16,8 +16,7 @@ ApplicationWindow {
 	height: 720
 	visible: true
 
-	property bool drawerExpanded: true
-	property bool loginForm: false
+	property var cMainView
 
 	menuBar: MenuBar {
 		background: Pane {
@@ -31,9 +30,7 @@ ApplicationWindow {
 			MenuItem {
 				text: qsTr("Login")
 				onTriggered: {
-					const loginComponent = Qt.createComponent("windows/login_window.qml")
-					const loginWindow = loginComponent.createObject(rootWindow)
-					loginWindow.show()
+					cMainView.show_login_form();
 				}
 			}
 			MenuSeparator {
@@ -62,6 +59,7 @@ ApplicationWindow {
 			anchors.left: parent.left
 			anchors.right: parent.right
 			RoundButton {
+				id: home
 				Layout.preferredWidth: parent.width
 				Layout.preferredHeight: Layout.preferredWidth
 				flat: true
@@ -79,9 +77,6 @@ ApplicationWindow {
 		height: parent.height
 		leftInset: drawer.width
 		leftPadding: leftInset
-		background: Rectangle {
-			color: "#ffffff"
-		}
 
 		contentItem: Item {
 		}
