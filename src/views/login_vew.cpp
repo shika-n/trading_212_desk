@@ -13,7 +13,7 @@ namespace trading_212_desk {
 		// If there is no instance yet
 		if (instance == nullptr) {
 			// Get the root window/parent
-			QObject *root_window = qobject_cast<QWindow *>(engine->rootObjects().first());
+			QWindow *root_window = static_cast<QWindow *>(engine->rootObjects().first());
 			
 			// Load the component
 			QQmlComponent component(engine, ":/qml/windows/login_window.qml", root_window);
@@ -27,7 +27,7 @@ namespace trading_212_desk {
 				// Set the component's parent
 				instance->setParent(root_window);
 				// Set the window's parent
-				static_cast<QQuickWindow *>(instance)->setTransientParent(static_cast<QWindow *>(root_window));
+				static_cast<QQuickWindow *>(instance)->setTransientParent(root_window);
 				// Set as visible
 				instance->setProperty("visible", true);
 			}
