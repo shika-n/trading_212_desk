@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
+import "components" as Components
+
 // #363945 navy
 // #2e313b dark navy
 // #00a9e1 light blue
@@ -11,7 +13,7 @@ import QtQuick.Layouts
 
 ApplicationWindow {
 	id: rootWindow
-	title: "Trading 212 Desk"
+	title: qsTr("Trading 212 Desk")
 	width: 1280
 	height: 720
 	visible: true
@@ -20,7 +22,6 @@ ApplicationWindow {
 
 	menuBar: MenuBar {
 		background: Pane {
-			Material.elevation: 6
 			background: Rectangle {
 				color: Material.primary
 			}
@@ -79,6 +80,8 @@ ApplicationWindow {
 		leftPadding: leftInset
 
 		contentItem: Item {
+			objectName: "content"
+			Components.MainStockPanel {}
 		}
 	}
 }

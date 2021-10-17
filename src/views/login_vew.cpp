@@ -16,7 +16,7 @@ namespace trading_212_desk {
 			QWindow *root_window = static_cast<QWindow *>(engine->rootObjects().first());
 			
 			// Load the component
-			QQmlComponent component(engine, ":/qml/windows/login_window.qml", root_window);
+			QQmlComponent component(engine, ":/qml/windows/LoginWindow.qml", root_window);
 
 			// Create the instance
 			instance = component.create();
